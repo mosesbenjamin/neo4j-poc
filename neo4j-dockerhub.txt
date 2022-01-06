@@ -1,0 +1,62 @@
+// container org
+CREATE (n:ContainerOrganization{name: '_'})
+
+// container registries
+CREATE (n:ContainerRegistry{name: 'dockerhub'})
+
+//container repo
+CREATE (n:ContainerRepository{name:'hello-world'});
+CREATE (n:ContainerRepository{name:'neo4j'});
+CREATE (n:ContainerRepository{name:'node'});
+
+// some rxs
+MATCH (registry:ContainerRegistry), (org:ContainerOrganization)
+WHERE org.name = '_' AND registry.name = 'dockerhub'
+CREATE (org)-[r:registry]->(registry);
+
+MATCH (repo:ContainerRepository), (org:ContainerOrganization)
+WHERE org.name = '_' AND repo.name = 'neo4j'
+CREATE (repo)-[r:ORGANIZATION]->(org);
+
+MATCH (repo:ContainerRepository), (org:ContainerOrganization)
+WHERE org.name = '_' AND repo.name = 'hello-world'
+CREATE (repo)-[r:ORGANIZATION]->(org);
+
+MATCH (repo:ContainerRepository), (org:ContainerOrganization)
+WHERE org.name = '_' AND repo.name = 'node'
+CREATE (repo)-[r:ORGANIZATION]->(org);
+
+// some container images
+CREATE (n:ContainerImage{
+    digest: '4eba4bd97eecf475954e3e1dd43ce6283d21a5607b3cf3bbc658b19c65d1a3eb',
+    osarch: 'linux/amd64',
+    compressedsizemb: 369.93 
+});
+
+CREATE (n:ContainerImage{
+    digest: '91a9cb7e79e0acabfb0a6adcd265c3fc94ce1c88cc1364da76b12d723b008305',
+    osarch: 'linux/amd64',
+    compressedsizemb: 341.54
+});
+
+
+// relate the tags
+MATCH (image:ContainerImage), (repo:ContainerRepository)
+WHERE repo.name = 'neo4j' AND image.digest = '4eba4bd97eecf475954e3e1dd43ce6283d21a5607b3cf3bbc658b19c65d1a3eb'
+CREATE (repo)-[r:TAG{name: '4.1.4-enterprise'}]->(image);
+
+MATCH (image:ContainerImage), (repo:ContainerRepository)
+WHERE repo.name = 'neo4j' AND image.digest = '91a9cb7e79e0acabfb0a6adcd265c3fc94ce1c88cc1364da76b12d723b008305'
+CREATE (repo)-[r:TAG{name: '4.1.4-community'}]->(image);
+
+// add a user
+CREATE (n:ContainerRegistryUser{name: 'doijanky'});
+
+// relate user
+MATCH (image:ContainerImage), (user:ContainerRegistryUser)
+WHERE user.name = 'doijanky' AND image.digest = '4eba4bd97eecf475954e3e1dd43ce6283d21a5607b3cf3bbc658b19c65d1a3eb'
+CREATE (image)-[r:PUSHED_BY{lastpushed: '2021-04022 01:55:00'}]->(user);
+
+MATCH (image:ContainerImage), (user:ContainerRegistryUser)
+WHERE user.name = 'doijanky' AND image.digest = '91a9cb7e79e0acabfb0a6adcd265c3fc94ce1c88cc1364da76b12d723b008305'
+CREATE (image)-[r:PUSHED_BY{lastpushed: '2021-04022 01:55:00'}]->(user);
