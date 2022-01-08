@@ -1,0 +1,112 @@
+<body 
+    style="	
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box; 
+    ">
+    <section 
+    style="
+       display: flex;
+       justify-content: space-around;
+       background-color: rgba(82,171,152, 70%)
+    ">
+    <div>
+        <h4>Container Repositories</h4>
+        <ul>
+            <% repos.forEach((repo) => { %>
+                <li><%= repo.name %></li>
+            <% }) %>
+        </ul>
+    </div>
+
+    <div>
+        <h4>Add Container Repository</h4>
+        <form method="post" action="/repo/add"><br>
+            <label for="name" type="text">Name</label><br>
+            <input type="text" name="name">
+            <br><br>
+        
+            <input type="submit" value="submit">
+        </form>
+    </div>
+</section>
+<section
+    style="
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        background-color: #c8d8e4
+    ">
+    <div style="margin-right: 10px;">
+        <h4>Container Images</h4>
+        <table>
+            <tr>
+                <th>Digest</th>
+                <th>OSArch</th>
+                <th>Compressed Size</th>
+            </tr>
+            <% images.forEach((image) => { %>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td><%= image.digest %></td>
+                    <td><%= image.osarch %></td>
+                    <td><%= image.compressedsizemb %></td>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+    
+    <div>
+        <h4>Add Container Image</h4>
+        <form method="post" action="/image/add">
+            <label for="digest" type="text">Digest</label><br>
+            <input type="text" name="digest"><br>
+        
+            <label for="osarch" type="text">OsArch</label><br>
+            <input type="text" name="osarch"><br>
+        
+            <label for="compressedsizemb" type="text">Compressed Size</label><br>
+            <input type="text" name="compressedsizemb">
+            <br><br>
+        
+            <input type="submit" value="submit">
+        </form>
+    </div>
+</section>
+
+<section
+    style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(82,171,152, 70%)
+">
+    <div>
+        <h4>Add Container Image to Repository</h4>
+        <form 
+            method="post" 
+            action="/repo/image/add"
+            style="display: flex; justify-content: space-around; flex-wrap: wrap;"
+            >
+            <select name="image">
+                <option value="">Select Image</option>
+                <% images.forEach((image) => { %>
+                    <option value='<%= image.digest %>'><%= image.digest %></option>
+                <% }) %>
+            </select>
+    
+            <p style="padding: 0 2em;">to</p>
+    
+            <select name="repo">
+                <option value="">Select Repo</option>
+                <% repos.forEach((repo) => { %>
+                    <option value='<%= repo.name %>'><%= repo.name %></option>
+                <% }) %>
+            </select>      
+    
+            <input type="submit" value="submit">
+        </form>
+    </div>
+</section>
+
+</body>
