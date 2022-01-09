@@ -2,14 +2,19 @@ import path from 'path';
 
 import express from 'express';
 import logger from 'morgan';
-import neo4j from 'neo4j-driver'
+import neo4j from 'neo4j-driver';
+import dotenv from 'dotenv';
 
+dotenv.config()
 const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
+if (process.env.NODE_ENV === 'development') {
+    app.use(logger('dev'));
+}
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -118,7 +123,7 @@ app.post('/repo/image/add', async (req, res) => {
     res.redirect("/")
 })
 
-const PORT = 9800
+const PORT: string | number = process.env.PORT || 9800
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`)
 })
